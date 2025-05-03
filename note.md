@@ -52,3 +52,40 @@
 在部署好上面的数据库后，再部署`WordPress`应用，关联到域名`www.example.com`。其中`WordPress`使用`MariaDB`作为数据库。实现负载均衡和自动故障转移，配置好网站证书，支持通过`http`和`https`访问网站。
 
 ---
+
+最后演示一下如何在`k8s`中滚动更新对应的`Pod`，这些`Pod`的`web`程序使用`Nginx`或者`OpenResty`进行反代。
+
+例如我有下面的`python`的`web`程序
+
+```python
+from flask import Flask
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app, supports_credentials=True)
+
+@app.route('/', methods=['GET'])
+def hello_world():
+    return 'hello, world 123 !'
+
+if __name__ == '__main__':
+    app.run(debug=True, threaded=True,, host='0.0.0.0', port=18080)
+```
+
+我想滚动更新到下面的新的`python`的`web`程序，该如何操作?
+
+```python
+from flask import Flask
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app, supports_credentials=True)
+
+@app.route('/', methods=['GET'])
+def hello_world():
+    return 'hello, world 456 !'
+
+if __name__ == '__main__':
+    app.run(debug=True, threaded=True,, host='0.0.0.0', port=18080)
+```
+
